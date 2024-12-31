@@ -1,21 +1,51 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Paper,
-  TextField,
   Button,
   Typography,
   Container,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
+import GoogleIcon from '@mui/icons-material/Google';
+import { authService } from '../../services/authService';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO: Implement login functionality
-    console.log('Login attempt with:', { email });
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        await authService.initGoogleAuth();
+        if (authService.isAuthenticated()) {
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error initializing Google Auth:', error);
+        setError('Failed to initialize Google authentication');
+      }
+    };
+
+    initAuth();
+  }, [navigate]);
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await authService.signIn();
+      navigate('/');
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Failed to sign in with Google. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -43,40 +73,27 @@ const Login = () => {
           <Typography component="h2" variant="h5" gutterBottom>
             Sign In
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-          </Box>
+          
+          {error && (
+            <Alert severity="error" sx={{ mb: 2, width: '100%' }}>
+              {error}
+            </Alert>
+          )}
+
+          <Button
+            fullWidth
+            variant="contained"
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <GoogleIcon />}
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            sx={{ mt: 2 }}
+          >
+            {loading ? 'Signing in...' : 'Sign in with Google'}
+          </Button>
+          
+          <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 3 }}>
+            Sign in to access Search Console data and track your SEO performance
+          </Typography>
         </Paper>
       </Box>
     </Container>

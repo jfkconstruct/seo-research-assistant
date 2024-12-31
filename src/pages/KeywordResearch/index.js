@@ -7,6 +7,7 @@ import {
   Paper,
   Grid,
   Alert,
+  CircularProgress,
 } from '@mui/material';
 import KeywordResults from '../../components/KeywordResults';
 import { keywordService } from '../../services/keywordService';
@@ -31,6 +32,7 @@ const KeywordResearch = () => {
       const data = await keywordService.getKeywordMetrics(keyword.trim());
       setResults(data);
     } catch (err) {
+      console.error('Error fetching keyword data:', err);
       setError(err.message || 'Failed to fetch keyword data');
     } finally {
       setLoading(false);
@@ -40,7 +42,7 @@ const KeywordResearch = () => {
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
-        Keyword Research
+        YouTube Keyword Research
       </Typography>
       <Paper sx={{ p: 3, mb: 3 }}>
         <form onSubmit={handleSubmit}>
@@ -54,6 +56,7 @@ const KeywordResearch = () => {
                 variant="outlined"
                 error={Boolean(error)}
                 helperText={error}
+                disabled={loading}
               />
             </Grid>
             <Grid item xs={12} md={4}>
@@ -64,8 +67,9 @@ const KeywordResearch = () => {
                 color="primary"
                 size="large"
                 disabled={loading}
+                startIcon={loading && <CircularProgress size={20} color="inherit" />}
               >
-                {loading ? 'Researching...' : 'Research'}
+                {loading ? 'Analyzing...' : 'Analyze'}
               </Button>
             </Grid>
           </Grid>

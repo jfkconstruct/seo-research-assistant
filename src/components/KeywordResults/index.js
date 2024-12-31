@@ -3,154 +3,203 @@ import {
   Box,
   Card,
   CardContent,
-  Typography,
   Grid,
-  Chip,
-  LinearProgress,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
   Divider,
+  Link,
+  Chip,
+  Stack,
+  LinearProgress,
 } from '@mui/material';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import BarChartIcon from '@mui/icons-material/BarChart';
+import {
+  Visibility as ViewsIcon,
+  ThumbUp as LikesIcon,
+  Comment as CommentsIcon,
+  TrendingUp as TrendingIcon,
+  Speed as CompetitionIcon,
+} from '@mui/icons-material';
+
+const formatNumber = (num) => {
+  if (num >= 1000000) {
+    return `${(num / 1000000).toFixed(1)}M`;
+  }
+  if (num >= 1000) {
+    return `${(num / 1000).toFixed(1)}K`;
+  }
+  return num.toString();
+};
 
 const KeywordResults = ({ data, loading, error }) => {
   if (loading) {
-    return (
-      <Box sx={{ width: '100%', mt: 2 }}>
-        <LinearProgress />
-      </Box>
-    );
+    return <LinearProgress />;
   }
 
   if (error) {
-    return (
-      <Typography color="error" sx={{ mt: 2 }}>
-        Error: {error}
-      </Typography>
-    );
+    return null;
   }
 
   if (!data) {
     return null;
   }
 
-  const getDifficultyColor = (difficulty) => {
-    if (difficulty < 30) return 'success';
-    if (difficulty < 60) return 'warning';
-    return 'error';
-  };
-
-  const formatNumber = (num) => {
-    return new Intl.NumberFormat().format(num);
-  };
-
   return (
-    <Box sx={{ mt: 3 }}>
-      {/* Main Metrics */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={4}>
+    <Box>
+      <Grid container spacing={3}>
+        {/* Main Metrics */}
+        <Grid item xs={12}>
           <Card>
             <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Search Volume
+              <Typography variant="h6" gutterBottom>
+                YouTube Performance Metrics
               </Typography>
-              <Typography variant="h4">
-                {formatNumber(data.searchVolume)}
-              </Typography>
-              <Box sx={{ mt: 1, display: 'flex', alignItems: 'center' }}>
-                {data.volumeTrend > 0 ? (
-                  <TrendingUpIcon color="success" />
-                ) : (
-                  <TrendingDownIcon color="error" />
-                )}
-                <Typography variant="body2" sx={{ ml: 1 }}>
-                  {Math.abs(data.volumeTrend)}% vs last month
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={4}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <ViewsIcon sx={{ mr: 1 }} />
+                    <div>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Avg. Views
+                      </Typography>
+                      <Typography variant="h6">
+                        {formatNumber(data.avgViews)}
+                      </Typography>
+                    </div>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <LikesIcon sx={{ mr: 1 }} />
+                    <div>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Avg. Likes
+                      </Typography>
+                      <Typography variant="h6">
+                        {formatNumber(data.avgLikes)}
+                      </Typography>
+                    </div>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <CommentsIcon sx={{ mr: 1 }} />
+                    <div>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Avg. Comments
+                      </Typography>
+                      <Typography variant="h6">
+                        {formatNumber(data.avgComments)}
+                      </Typography>
+                    </div>
+                  </Box>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Competition Score */}
+        <Grid item xs={12} md={6}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <CompetitionIcon sx={{ mr: 1 }} />
+                <Typography variant="h6">Competition Score</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                <Box sx={{ flexGrow: 1, mr: 1 }}>
+                  <LinearProgress
+                    variant="determinate"
+                    value={data.competitionScore}
+                    sx={{ height: 10, borderRadius: 5 }}
+                  />
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                  {data.competitionScore}%
                 </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Keyword Difficulty
-              </Typography>
-              <Typography variant="h4">
-                {data.difficulty}%
-              </Typography>
-              <Chip
-                label={data.difficulty < 30 ? 'Easy' : data.difficulty < 60 ? 'Moderate' : 'Hard'}
-                color={getDifficultyColor(data.difficulty)}
-                size="small"
-                sx={{ mt: 1 }}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                CPC
-              </Typography>
-              <Typography variant="h4">
-                ${data.cpc.toFixed(2)}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Average cost per click
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                {data.competitionScore < 30
+                  ? 'Low competition - Good opportunity'
+                  : data.competitionScore < 70
+                  ? 'Moderate competition'
+                  : 'High competition - Challenging to rank'}
               </Typography>
             </CardContent>
           </Card>
         </Grid>
-      </Grid>
 
-      {/* Related Keywords */}
-      <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
-        Related Keywords
-      </Typography>
-      <Grid container spacing={2}>
-        {data.relatedKeywords?.map((keyword, index) => (
-          <Grid item xs={12} key={index}>
-            <Card>
-              <CardContent>
-                <Grid container alignItems="center" spacing={2}>
-                  <Grid item xs={12} md={4}>
-                    <Typography variant="subtitle1">{keyword.term}</Typography>
-                  </Grid>
-                  <Grid item xs={6} md={2}>
-                    <Typography color="textSecondary" variant="body2">
-                      Volume
-                    </Typography>
-                    <Typography>{formatNumber(keyword.volume)}</Typography>
-                  </Grid>
-                  <Grid item xs={6} md={2}>
-                    <Typography color="textSecondary" variant="body2">
-                      Difficulty
-                    </Typography>
-                    <Chip
-                      size="small"
-                      label={`${keyword.difficulty}%`}
-                      color={getDifficultyColor(keyword.difficulty)}
-                    />
-                  </Grid>
-                  <Grid item xs={6} md={2}>
-                    <Typography color="textSecondary" variant="body2">
-                      CPC
-                    </Typography>
-                    <Typography>${keyword.cpc.toFixed(2)}</Typography>
-                  </Grid>
-                  <Grid item xs={6} md={2}>
-                    <BarChartIcon />
-                    <Typography variant="body2" component="span" sx={{ ml: 1 }}>
-                      {keyword.trend}% trend
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+        {/* Engagement Rate */}
+        <Grid item xs={12} md={6}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <TrendingIcon sx={{ mr: 1 }} />
+                <Typography variant="h6">Engagement Rate</Typography>
+              </Box>
+              <Typography variant="h4" sx={{ mb: 1 }}>
+                {data.engagement.toFixed(2)}%
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Average engagement rate based on likes and comments relative to views
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Top Performing Videos */}
+        <Grid item xs={12}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Top Performing Videos
+              </Typography>
+              <List>
+                {data.topVideos?.map((video, index) => (
+                  <React.Fragment key={index}>
+                    <ListItem alignItems="flex-start">
+                      <ListItemText
+                        primary={
+                          <Link
+                            href={video.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            color="inherit"
+                            underline="hover"
+                          >
+                            {video.title}
+                          </Link>
+                        }
+                        secondary={
+                          <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                            <Chip
+                              size="small"
+                              icon={<ViewsIcon />}
+                              label={`${formatNumber(video.viewCount)} views`}
+                            />
+                            <Chip
+                              size="small"
+                              icon={<LikesIcon />}
+                              label={formatNumber(video.likeCount)}
+                            />
+                            <Chip
+                              size="small"
+                              icon={<CommentsIcon />}
+                              label={formatNumber(video.commentCount)}
+                            />
+                          </Stack>
+                        }
+                      />
+                    </ListItem>
+                    {index < data.topVideos.length - 1 && <Divider />}
+                  </React.Fragment>
+                ))}
+              </List>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
     </Box>
   );

@@ -1,28 +1,34 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import theme from './theme';
-
-// Pages
-import Dashboard from './pages/Dashboard';
-import Login from './pages/Login';
+import Layout from './components/Layout';
 import KeywordResearch from './pages/KeywordResearch';
 
-// Components
-import Layout from './components/Layout';
+const theme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+});
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="keyword-research" element={<KeywordResearch />} />
-        </Route>
-      </Routes>
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Navigate to="/keyword-research" replace />} />
+            <Route path="/keyword-research" element={<KeywordResearch />} />
+          </Routes>
+        </Layout>
+      </Router>
     </ThemeProvider>
   );
 }
