@@ -4,6 +4,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Layout from './components/Layout';
 import KeywordResearch from './pages/KeywordResearch';
+import CompetitorAnalysis from './pages/CompetitorAnalysis';
 
 const theme = createTheme({
   palette: {
@@ -26,6 +27,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/keyword-research" replace />} />
             <Route path="/keyword-research" element={<KeywordResearch />} />
+            <Route path="/competitor-analysis" element={<CompetitorAnalysis />} />
           </Routes>
         </Layout>
       </Router>

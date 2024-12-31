@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   AppBar,
   Box,
@@ -6,8 +7,11 @@ import {
   Toolbar,
   Typography,
   IconButton,
+  Button,
 } from '@mui/material';
 import YouTubeIcon from '@mui/icons-material/YouTube';
+import SearchIcon from '@mui/icons-material/Search';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 
 const Layout = ({ children }) => {
   return (
@@ -24,8 +28,25 @@ const Layout = ({ children }) => {
             <YouTubeIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            YouTube Keyword Research
+            YouTube Research Assistant
           </Typography>
+          <Button
+            color="inherit"
+            component={RouterLink}
+            to="/keyword-research"
+            startIcon={<SearchIcon />}
+            sx={{ mr: 2 }}
+          >
+            Keyword Research
+          </Button>
+          <Button
+            color="inherit"
+            component={RouterLink}
+            to="/competitor-analysis"
+            startIcon={<CompareArrowsIcon />}
+          >
+            Competitor Analysis
+          </Button>
         </Toolbar>
       </AppBar>
       
@@ -47,7 +68,7 @@ const Layout = ({ children }) => {
       >
         <Container maxWidth="sm">
           <Typography variant="body2" color="text.secondary" align="center">
-            {new Date().getFullYear()} YouTube Keyword Research Tool
+            {new Date().getFullYear()} YouTube Research Assistant
           </Typography>
         </Container>
       </Box>
